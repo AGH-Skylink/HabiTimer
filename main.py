@@ -15,11 +15,30 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 
-ALARM_DELAY_SECONDS = 7200
+ALARM_DELAY_SECONDS = 5
 
 sound_dir = os.path.join(os.path.dirname(__file__), 'sounds')
 os.makedirs(sound_dir, exist_ok=True)
-names = ["Kapi", "Gabi", "Olek", "Dobi", "Natalka", "Eleonora"]
+names = []
+
+if not os.path.exists(os.path.join(os.path.dirname(__file__), '.habitimer')):
+    os.makedirs(os.path.join(os.path.dirname(__file__), '.habitimer'), exist_ok=True)
+if not os.path.exists(os.path.join(os.path.dirname(__file__), '.habitimer/names.txt')):
+    with open(os.path.join(os.path.dirname(__file__), '.habitimer/names.txt'), "w") as f:
+        f.write("")
+
+with open(os.path.join(os.path.dirname(__file__), '.habitimer/names.txt')) as f: 
+    for name in f.readlines():
+        names.append(name[:-1])
+
+if len(names) < 6:
+    num_missing = 6 - len(names)
+    for i in range(num_missing):
+        new_name = input(f"Enter name {len(names) + 1}: ").strip()
+        names.append(new_name)
+    with open(os.path.join(os.path.dirname(__file__), '.habitimer/names.txt'), "w") as f:
+        for name in names:
+            f.write(name + "\n")
 
 alarm_sound_path = os.path.join(sound_dir, 'alarm.mp3')
 
@@ -134,6 +153,11 @@ while running:
     
     for checkbox in checkboxes:
         checkbox.draw(screen)
+    
+    timer_expired = False
+    for checkbox in checkboxes:
+        if checkbox.update():
+            timer_expired = True
     
     any_unchecked = any(not checkbox.checked for checkbox in checkboxes)
     
