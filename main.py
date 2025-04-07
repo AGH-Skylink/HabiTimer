@@ -39,6 +39,11 @@ if len(names) < 6:
     with open(os.path.join(os.path.dirname(__file__), '.habitimer/names.txt'), "w") as f:
         for name in names:
             f.write(name + "\n")
+ALARM_DELAY_SECONDS = 7200
+
+sound_dir = os.path.join(os.path.dirname(__file__), 'sounds')
+os.makedirs(sound_dir, exist_ok=True)
+names = ["Kapi", "Gabi", "Olek", "Dobi", "Natalka", "Eleonora"]
 
 alarm_sound_path = os.path.join(sound_dir, 'alarm.mp3')
 
@@ -153,11 +158,6 @@ while running:
     
     for checkbox in checkboxes:
         checkbox.draw(screen)
-    
-    timer_expired = False
-    for checkbox in checkboxes:
-        if checkbox.update():
-            timer_expired = True
     
     any_unchecked = any(not checkbox.checked for checkbox in checkboxes)
     
